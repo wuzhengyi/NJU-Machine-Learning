@@ -1,3 +1,5 @@
+% !TEX program = xelatex
+
 \documentclass[a4paper,UTF8]{article}
 \usepackage{ctex}
 \usepackage[margin=1.25in]{geometry}
@@ -14,6 +16,10 @@
 \usepackage{tcolorbox}
 \usepackage{mdframed}
 \usepackage{lipsum}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{float}
 \newmdtheoremenv{thm-box}{myThm}
 \newmdtheoremenv{prop-box}{Proposition}
 \newmdtheoremenv{def-box}{定义}
@@ -64,7 +70,7 @@
 \begin{document}
 \title{机器学习导论\\
 作业一}
-\author{学号, 作者姓名, 邮箱}
+\author{151220129, 吴政亿, 18805156360@163.com}
 \maketitle
 
 \section*{学术诚信}
@@ -117,11 +123,52 @@
 \end{enumerate}
 \begin{mySol}
 此处用于写解答(中英文均可)
-~\\
-~\\
-~\\
-~\\
-~\\
+
+答：
+\begin{enumerate}[ {(}1{)}]
+\item 
+\begin{equation}
+	F_X(x) = 
+	\begin{cases}
+		0				& x \leq 0 \\
+		\frac{1}{4} x 	& 0<x<1;\\
+		\frac{1}{4} 	& 1 \leq x \leq 3;\\
+		\frac{3}{8} x - \frac{7}{8} & 3<x<5;\\
+		1				& x \geq 5 
+	\end{cases}
+\end{equation}
+
+\item 
+\begin{equation}
+\begin{aligned}
+	&F_Y(y)=Pr[Y<y]=Pr[1/X<y]=1-Pr[X<1/y]=1-F_X(1/y)=
+	\begin{cases}
+		0				& y \leq \frac{1}{5} \\
+		\frac{8}{15}-\frac{3}{8y} &\frac{1}{5}<y<\frac{1}{3};\\
+		\frac{3}{4} 	& \frac{1}{3} \leq y \leq 1;\\
+		1 - \frac{1}{4y} & 1<y;
+	\end{cases}
+	\\
+	&f_Y(y) = F_Y'(y) = 
+	\begin{cases}
+		\frac{3}{8y^3} & \frac{1}{5}<y<\frac{1}{3};\\
+		\frac{1}{4y^2} & 1<y;\\
+		0					& \mbox{otherwise.}
+	\end{cases}
+\end{aligned}
+\end{equation}
+
+\item
+\[
+\int^{\infty}_{z=0}{Pr[Z \geq z]dz} 
+= \int^{\infty}_{z=0}\int^{\infty}_{z}{f(t)dtdz}
+= \int^{\infty}_{z=0}\int^t_0{f(t)}dzdt
+= \int^{\infty}_{t=0}{tf(t)}dt
+= \int^{\infty}_{z=0}{zf(z)}dz
+\]
+
+\end{enumerate}
+
 \end{mySol}
 
 \newpage
@@ -171,7 +218,7 @@
 \end{def-box}
 对于双随机矩阵$\mathbf{X} \in \mathbb{R}^{d\times d}$，试证明
 \begin{enumerate}[ {(}1{)}]
-\item \textbf{[10pts]} 矩阵$\mathbf{X}$的\href{https://en.wikipedia.org/wiki/Entropy_(information_theory)}{信息熵 (entropy)}满足$H(\mathbf{X}) \leq 2\log d$.
+\item \textbf{[10pts]} 矩阵$\mathbf{X}$的\href{https://en.wikipedia.org/wiki/Entropy_(information_theory)}{信息熵 (entropy)}满足$H(\mathbf{X}) \leq d\log d$.
 \item \textbf{[10pts]} 矩阵$\mathbf{X}$的\href{https://en.wikipedia.org/wiki/Spectral_radius}{谱半径 (spectral radius
 )}$\rho(\mathbf{X})$等于1，且是$\mathbf{X}$的特征值;(提示：你可能会需要\href{https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem}{Perron–Frobenius定理}，可以基于此进行证明。)
 \end{enumerate}
@@ -179,9 +226,24 @@
 此处用于写证明(中英文均可)
 ~\\
 ~\\
-~\\
-~\\
-~\\
+答：\\
+\begin{enumerate}[ {(}1{)}]
+\item
+	\begin{equation}
+	\begin{aligned}
+		&H(X)	= -\sum_{i=1}^{d}\sum_{j=1}^{d}{D_{ij}\log{X_{ij}}}
+				= -\sum_{i=1}^{d}(\sum_{j=1}^{d}{D_{ij}\log{X_{ij}}})\\
+		&\because (x\log{x})'' > 0\\
+		&\therefore {\frac{\sum_{x_i}}{n}}\log{{\frac{\sum_{x_i}}{n}}} 
+					\leq \frac{1}{n}\sum{x_i\log{x_i}}\\
+		&\therefore H(x) \leq -\sum_{i=1}^{d}
+		{(d*\frac{1}{d}\log{\frac{1}{d}})}=d\log{d}
+	\end{aligned}
+	\end{equation}
+\item
+
+\end{enumerate}
+
 \qed
 \end{myProof}
 \newpage
@@ -206,7 +268,30 @@ $D_5$ 		& 3 		&  5  		& 2  		&  1 		& 4			\\ \hline
 此处用于写解答(中英文均可)
 ~\\
 ~\\
+答：\\
 ~\\
+查表得当$\alpha = 0.05$，数据集个数$N = 5$，算法个数$k = 5$时，F检验常用临界值为3.007\\
+计算得算法A到E的平均序值为$3.8,4,3.2,1.2,2.8$\\
+\[
+\tau_{\chi^2} 
+= \frac{12N}{k(k+1)}(\sum^k_{i=1}{r_i^2}-\frac{k(k+1)^2}{4})
+=\frac{12*5}{5(6)}(3.8^2+4^2+3.2^2+1.2^2+2.8^2-\frac{5(6)^2}{4})
+=9.92
+\]
+\[
+\tau_F 
+= \frac{(N-1)\tau_{\chi^2}}{N(k-1)-\tau_{\chi^2}}
+= \frac{4*9.92}{5*4-9.92}
+= 3.9365 > 3.007 
+\]
+因此拒绝“所有算法性能相同”这个假设。下面进行Nemenyi后续检验：\\
+查表得当$\alpha = 0.05$，数据集个数$N = 5$，算法个数$k = 5$时，
+$q_{0.05}=2.728$\\
+\[CD 	= q_{\alpha}\sqrt{\frac{k(k+1)}{6N}}
+		= 2.728*\sqrt{\frac{5*6}{6*5}}
+		= 2.728
+		\]
+由计算的平均序值可知，只有算法B与算法D的差距超过临界值域，因此检验结果认为算法B与算法D的性能显著不同，而其他两两之间的性能没有显著差别。
 \end{mySol}
 
 \newpage
@@ -231,10 +316,56 @@ $D_5$ 		& 3 		&  5  		& 2  		&  1 		& 4			\\ \hline
 \begin{mySol}
 此处用于写解答(中英文均可)
 ~\\
-~\\
-~\\
-~\\
-~\\
+答：\\
+
+\begin{enumerate}[ {(}1{)}]
+\item 
+	根据预测结果与样例进行排序，则分别为 + + - + -。\\
+	计算得$\frac{1}{m^+}=\frac{1}{3},\frac{1}{m^-}=\frac{1}{2}$
+	则他们的坐标分别为
+	
+	\begin{equation}
+	(0,0),
+	(0,\frac{1}{3}),
+	(0,\frac{2}{3}),
+	(\frac{1}{2},\frac{2}{3}),
+	(\frac{1}{2},1),
+	(1,1)
+	\end{equation}
+	
+	ROC图像为：\\
+	
+	\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.32\linewidth]{roc.png}
+		%\caption{An image of Lena.}
+		%\label{Fig:1}
+	\end{center}
+	\vspace{-0.5em}
+	\end{figure}
+	
+	\[
+		AUC=\frac{1}{2}\sum^{m-1}_{i=1}{(x_{i+1}-x_i)*(y_i+y_{i+1})}
+		=\frac{1}{2}*(\frac{1}{2}*\frac{4}{3}+\frac{1}{2}*1)
+		=\frac{7}{12}		
+	\] 
+	\[\ell_{rank}=1-AUC=\frac{5}{12}\]
+	
+\item
+	根据ROC曲线的绘制，计算AUC时，考虑每一对正、反例，若正例的预测值小于反例，则x先增加，y后增加，AUC不会增加；若正例的预测值大于反例，则y先增加，x后增加，AUC增加$\frac{1}{m^+m^-}$;若正例的预测值等于反例，则x，y同时增加，AUC增加$\frac{1}{2m^+m^-}$。\\
+	
+	\[
+	\therefore AUC=\frac{1}{m^+m^-}\sum_{x^+ \in D^+}\sum_{x^- \in D^-}(I(f(x^+)>f(x^-))+\frac{1}{2}I(f(x^+)=f(x^-)))
+	\]
+	
+	\[
+	\because \ell_{rank}=\frac{1}{m^+m^-}\sum_{x^+ \in D^+}\sum_{x^- \in D^-}(I(f(x^+)<f(x^-))+\frac{1}{2}I(f(x^+)=f(x^-)))
+	\]
+	
+	\[\therefore AUC+\ell_{rank}=1 \]
+	
+\end{enumerate}
+
 \end{mySol}
 
 \newpage
