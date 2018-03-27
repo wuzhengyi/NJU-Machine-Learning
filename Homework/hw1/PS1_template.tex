@@ -329,7 +329,30 @@ $(1-\alpha)$\ref{eq-sc-3} $+ \alpha$\ref{eq-sc-4}得到\\
 	{(d*\frac{1}{d}\log{\frac{1}{d}})}=d\log{d}
 \end{eqnarray*}
 \item
-
+矩阵X的\href{https://en.wikipedia.org/wiki/Spectral_radius}{谱半径}
+$\rho(X)=\max{\{|\lambda_1|,|\lambda_2|,...,|\lambda_n|}\}$
+\\
+由Perron–Frobenius 定理定理可得
+\[
+	\min_i{\sum_j{a_{ij}}} 
+	\leq \rho(X) 
+	\leq \max_i{\sum_j{a_{ij}}}
+\]
+$\because$矩阵$X$是双随机矩阵，\\
+\[
+	\therefore 1 = \min_i{\sum_j{a_{ij}}} 
+	\leq \rho(X) 
+	\leq \max_i{\sum_j{a_{ij}}} = 1
+\]
+$\therefore \rho(X)=1$\\
+对于任意特征值$\lambda$,特征向量$a$,有
+\[Xa=\lambda a\]
+两边取范数:
+\[||Xa||=||\lambda a||\]
+\[||X||~||a|| \geq |\lambda|~||a||\]
+\[ ||X||=||X||_0 = 1 \geq |\lambda|\]
+$\because \lambda = 1$显然是特征值,\\
+$\therefore$ 矩阵$\mathbf{X}$的\href{https://en.wikipedia.org/wiki/Spectral_radius}{谱半径}$\rho(\mathbf{X})$等于1，且是$\mathbf{X}$的特征值;
 \end{enumerate}
 
 \qed
