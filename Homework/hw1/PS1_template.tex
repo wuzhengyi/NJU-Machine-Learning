@@ -127,7 +127,7 @@
 答：
 \begin{enumerate}[ {(}1{)}]
 \item 
-\begin{equation}
+\begin{eqnarray*}
 	F_X(x) = 
 	\begin{cases}
 		0				& x \leq 0 \\
@@ -136,12 +136,13 @@
 		\frac{3}{8} x - \frac{7}{8} & 3<x<5;\\
 		1				& x \geq 5 
 	\end{cases}
-\end{equation}
+\end{eqnarray*}
 
 \item 
-\begin{equation}
-\begin{aligned}
-	&F_Y(y)=Pr[Y<y]=Pr[1/X<y]=1-Pr[X<1/y]=1-F_X(1/y)=
+\begin{eqnarray*}
+	&F_Y(y)&=Pr[Y<y]=Pr[1/X<y]\\
+	&&=1-Pr[X<1/y]=1-F_X(1/y)\\
+	&&=
 	\begin{cases}
 		0				& y \leq \frac{1}{5} \\
 		\frac{8}{15}-\frac{3}{8y} &\frac{1}{5}<y<\frac{1}{3};\\
@@ -149,24 +150,48 @@
 		1 - \frac{1}{4y} & 1<y;
 	\end{cases}
 	\\
-	&f_Y(y) = F_Y'(y) = 
+	&f_Y(y) = F_Y'(y) &= 
 	\begin{cases}
 		\frac{3}{8y^3} & \frac{1}{5}<y<\frac{1}{3};\\
 		\frac{1}{4y^2} & 1<y;\\
 		0					& \mbox{otherwise.}
 	\end{cases}
-\end{aligned}
-\end{equation}
+\end{eqnarray*}
 
 \item
-\[
-\int^{\infty}_{z=0}{Pr[Z \geq z]dz} 
-= \int^{\infty}_{z=0}\int^{\infty}_{z}{f(t)dtdz}
-= \int^{\infty}_{z=0}\int^t_0{f(t)}dzdt
-= \int^{\infty}_{t=0}{tf(t)}dt
-= \int^{\infty}_{z=0}{zf(z)}dz
-\]
-
+\begin{eqnarray*}
+	\int^{\infty}_{z=0}{Pr[Z \geq z]dz} 
+		&= \int^{\infty}_{z=0}\int^{\infty}_{z}{f(t)dtdz}\\
+		&= \int^{\infty}_{z=0}\int^t_0{f(t)}dzdt\\
+		&= \int^{\infty}_{t=0}{tf(t)}dt\\
+		&= \int^{\infty}_{z=0}{zf(z)}dz\\
+	\\	
+	E[X]&=\int^{\infty}_{z=0}{zf(z)}dz\\
+		&=\int^{1}_{0}{\frac14 z}dz +\int^{5}_{3}{z\frac38}dz\\
+		&=\frac{1}{8} + 3 = \frac{25}{8}\\	
+	\\
+	E[X]&=\int^{\infty}_{z=0}{Pr[Z \geq z]dz} \\
+		&=\int^{1}_{0}{(1-\frac{1}{4}x)dx}
+		+\int^{3}_{1}{\frac{3}{4}dx}
+		+\int^{5}_{3}{(\frac{15}{8}-\frac{3}{8}x)dx}
+		+\int^{\infty}_{5}{0dx}\\
+		&=\frac{7}{8}+\frac{3}{2}+\frac{3}{4}+0
+		=\frac{25}{8}\\
+	\\
+	E[Y]&=\int^{\infty}_{z=0}{zf(z)}dz\\
+		&=\int^{\frac{1}{3}}_{\frac{1}{5}}{\frac{3}{8y^2}}dy 
+		+\int^{\infty}_{1}{\frac{1}{4y} dy}\\
+		&=\frac{3}{4}+ \infty
+	\\
+	E[Y]&=\int^{\infty}_{z=0}{zf(z)}dz\\
+		&=\int^{\frac{1}{5}}_{0}{dy}
+		+\int^{\frac{1}{3}}_{\frac{1}{5}}{(\frac{3}{8y}-\frac{7}{15})dy}
+		+\int^{1}_{\frac{1}{3}}{(\frac{1}{4})dy}
+		+\int^{\infty}_{1}{(1-\frac{1}{4y})dy}\\
+		&=...-\int^{\infty}_{1}{(\frac{1}{4y})dy}\\
+		&=-\infty\\
+\end{eqnarray*}
+	所以$E[X]=\frac{25}{8},E[Y]$不存在。
 \end{enumerate}
 
 \end{mySol}
@@ -193,9 +218,53 @@
 此处用于写证明(中英文均可)
 ~\\
 ~\\
-~\\
-~\\
-~\\
+答：\\
+\begin{enumerate}
+\item[(1)]$\ref{eq-sc-1} \Leftarrow \ref{eq-sc-2}$\\
+设$\mathbf{z}=(1-\alpha)\mathbf{x}+\alpha \mathbf{y}$
+,由\ref{eq-sc-2}有:\\
+\begin{equation}
+  \label{eq-sc-3}
+  f(\mathbf{x}) \geq f(\mathbf{z}) + \nabla f(\mathbf{z})^\mathrm{T}(\mathbf{x}-\mathbf{z}) + \frac{\lambda}{2}\lVert \mathbf{x} - \mathbf{z}\rVert^2.
+\end{equation}
+
+\begin{equation}
+  \label{eq-sc-4}
+  f(\mathbf{y}) \geq f(\mathbf{z}) + \nabla f(\mathbf{z})^\mathrm{T}(\mathbf{y}-\mathbf{z}) + \frac{\lambda}{2}\lVert \mathbf{y} - \mathbf{z}\rVert^2.
+\end{equation}
+$(1-\alpha)$\ref{eq-sc-3} $+ \alpha$\ref{eq-sc-4}得到\\
+\begin{eqnarray*}
+  (1-\alpha)f(\mathbf{x})+\alpha f(\mathbf{y}) 
+  \geq f(\mathbf{z}) 
+  + \nabla f(\mathbf{z})^\mathrm{T}((1-\alpha)\mathbf{x}+\alpha\mathbf{y}-\mathbf{z}) 
+  + \frac{\lambda(1-\alpha)}{2}\lVert \mathbf{x} - \mathbf{z}\rVert^2 
+  + \frac{\lambda\alpha}{2}\lVert \mathbf{y} - \mathbf{z}\rVert^2.
+\end{eqnarray*}
+\begin{eqnarray*}
+  f(\mathbf{z})
+  &&\leq (1-\alpha)f(\mathbf{x})+\alpha f(\mathbf{y})
+  - \nabla f(\mathbf{z})^\mathrm{T}((1-\alpha)\mathbf{x}+\alpha\mathbf{y}-\mathbf{z})
+  - \frac{\lambda(1-\alpha)}{2}\lVert \mathbf{x}
+  - \mathbf{z}\rVert^2 - \frac{\lambda\alpha}{2}\lVert \mathbf{y} - \mathbf{z}\rVert^2.\\
+  &&\leq (1-\alpha)f(\mathbf{x})+\alpha f(\mathbf{y})
+  - \frac{\lambda(1-\alpha)}{2}\lVert \mathbf{x}- \mathbf{z}\rVert^2 
+  - \frac{\lambda\alpha}{2}\lVert \mathbf{y} - \mathbf{z}\rVert^2.\\
+  &&\leq (1-\alpha)f(\mathbf{x})+\alpha f(\mathbf{y})
+  - \frac{\lambda(1-\alpha)}{2}\lVert \alpha(\mathbf{x}- \mathbf{y})\rVert^2 
+  - \frac{\lambda\alpha}{2}\lVert (1-\alpha)(\mathbf{y} - \mathbf{x})\rVert^2.\\
+  &&\leq (1-\alpha)f(\mathbf{x})+\alpha f(\mathbf{y})
+  - \frac{\lambda(1-\alpha)\alpha^2}{2}\lVert \mathbf{x}- \mathbf{y}\rVert^2 
+  - \frac{\lambda\alpha (1-\alpha)^2}{2}\lVert \mathbf{y} - \mathbf{x} \rVert^2.\\
+  &&\leq (1-\alpha)f(\mathbf{x})+\alpha f(\mathbf{y})
+  - \frac{\lambda(1-\alpha)\alpha}{2}\lVert \mathbf{x}- \mathbf{y}\rVert^2.
+\end{eqnarray*}
+代入$\mathbf{z}=(1-\alpha)\mathbf{x}+\alpha \mathbf{y}$得到:\\
+\begin{eqnarray*}
+  f((1-\alpha)\mathbf{x} + \alpha\mathbf{y})\leq (1-\alpha)f(\mathbf{x}) + \alpha f(\mathbf{y}) - \frac{\lambda}{2}\alpha(1-\alpha)\lVert \mathbf{x} - \mathbf{y}\rVert^2.
+\end{eqnarray*}
+
+\item[(2)]$\ref{eq-sc-1} \Rightarrow \ref{eq-sc-2}$\\
+\end{enumerate}
 \qed
 \end{myProof}
 
@@ -229,17 +298,15 @@
 答：\\
 \begin{enumerate}[ {(}1{)}]
 \item
-	\begin{equation}
-	\begin{aligned}
-		&H(X)	= -\sum_{i=1}^{d}\sum_{j=1}^{d}{D_{ij}\log{X_{ij}}}
-				= -\sum_{i=1}^{d}(\sum_{j=1}^{d}{D_{ij}\log{X_{ij}}})\\
-		&\because (x\log{x})'' > 0\\
-		&\therefore {\frac{\sum_{x_i}}{n}}\log{{\frac{\sum_{x_i}}{n}}} 
-					\leq \frac{1}{n}\sum{x_i\log{x_i}}\\
-		&\therefore H(x) \leq -\sum_{i=1}^{d}
-		{(d*\frac{1}{d}\log{\frac{1}{d}})}=d\log{d}
-	\end{aligned}
-	\end{equation}
+\begin{eqnarray*}
+	&H(X)&= -\sum_{i=1}^{d}\sum_{j=1}^{d}{D_{ij}\log{X_{ij}}}\\
+		 &&= -\sum_{i=1}^{d}(\sum_{j=1}^{d}{D_{ij}\log{X_{ij}}})\\
+	&\because &(x\log{x})'' > 0\\
+	&\therefore &{\frac{\sum_{x_i}}{n}}\log{{\frac{\sum_{x_i}}{n}}} 
+				\leq \frac{1}{n}\sum{x_i\log{x_i}}\\
+	&\therefore &H(x) \leq -\sum_{i=1}^{d}
+	{(d*\frac{1}{d}\log{\frac{1}{d}})}=d\log{d}
+\end{eqnarray*}
 \item
 
 \end{enumerate}
@@ -324,14 +391,14 @@ $q_{0.05}=2.728$\\
 	计算得$\frac{1}{m^+}=\frac{1}{3},\frac{1}{m^-}=\frac{1}{2}$
 	则他们的坐标分别为
 	
-	\begin{equation}
+	\begin{eqnarray*}
 	(0,0),
 	(0,\frac{1}{3}),
 	(0,\frac{2}{3}),
 	(\frac{1}{2},\frac{2}{3}),
 	(\frac{1}{2},1),
 	(1,1)
-	\end{equation}
+	\end{eqnarray*}
 	
 	ROC图像为：\\
 	
