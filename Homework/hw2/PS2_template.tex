@@ -1,0 +1,173 @@
+\documentclass[a4paper,UTF8]{article}
+\usepackage{ctex}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{bm}
+\usepackage{hyperref}
+\usepackage{epsfig}
+\usepackage{color}
+\usepackage{mdframed}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\newmdtheoremenv{thm-box}{Theorem}
+\newmdtheoremenv{prop-box}{Proposition}
+\newmdtheoremenv{def-box}{定义}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{
+	numbers=left, 
+	numberstyle= \tiny, 
+	keywordstyle= \color{ blue!70},
+	commentstyle= \color{red!50!green!50!blue!50}, 
+	frame=shadowbox, % 阴影效果
+	rulesepcolor= \color{ red!20!green!20!blue!20} ,
+	escapeinside=``, % 英文分号中可写入中文
+	xleftmargin=2em,xrightmargin=2em, aboveskip=1em,
+	framexleftmargin=2em
+} 
+
+\usepackage{booktabs}
+
+\setlength{\evensidemargin}{.25in}
+\setlength{\textwidth}{6in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\topmargin}{-0.5in}
+% \setlength{\textheight}{9.5in}
+%%%%%%%%%%%%%%%%%%此处用于设置页眉页脚%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}                                
+\usepackage{lastpage}                                           
+\usepackage{layout}                                             
+\footskip = 10pt 
+\pagestyle{fancy}                    % 设置页眉                 
+\lhead{2018年春季}                    
+\chead{机器学习导论}                                                
+% \rhead{第\thepage/\pageref{LastPage}页} 
+\rhead{作业二}                                                                                               
+\cfoot{\thepage}                                                
+\renewcommand{\headrulewidth}{1pt}  			%页眉线宽，设为0可以去页眉线
+\setlength{\skip\footins}{0.5cm}    			%脚注与正文的距离           
+\renewcommand{\footrulewidth}{0pt}  			%页脚线宽，设为0可以去页脚线
+
+\makeatletter 									%设置双线页眉                                        
+\def\headrule{{\if@fancyplain\let\headrulewidth\plainheadrulewidth\fi%
+\hrule\@height 1.0pt \@width\headwidth\vskip1pt	%上面线为1pt粗  
+\hrule\@height 0.5pt\@width\headwidth  			%下面0.5pt粗            
+\vskip-2\headrulewidth\vskip-1pt}      			%两条线的距离1pt        
+ \vspace{6mm}}     								%双线与下面正文之间的垂直间距              
+\makeatother  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\numberwithin{equation}{section}
+%\usepackage[thmmarks, amsmath, thref]{ntheorem}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{definition}{Definition}
+\newtheorem*{solution}{Solution}
+\newtheorem*{prove}{Proof}
+\newcommand{\indep}{\rotatebox[origin=c]{90}{$\models$}}
+
+\usepackage{multirow}
+
+%--
+
+%--
+\begin{document}
+\title{机器学习导论\\
+作业二}
+\author{学号, 作者姓名, 邮箱}
+\maketitle
+
+\section{[25pts] Multi-Class Logistic Regression}
+教材的章节3.3介绍了对数几率回归解决二分类问题的具体做法。假定现在的任务不再是二分类问题，而是多分类问题，其中标记$y\in\{1,2\dots,K\}$。请将对数几率回归算法拓展到该多分类问题。
+
+\begin{enumerate}[(1)]
+	\item \textbf{[15pts]} 给出该对率回归模型的“对数似然”(log-likelihood);
+	\item \textbf{[10pts]} 计算出该“对数似然”的梯度。
+\end{enumerate}
+
+提示1：假设该多分类问题满足如下$K-1$个对数几率，
+\begin{eqnarray*}
+	\ln\frac{p(y=1|\mathbf{x})}{p(y=K|\mathbf{x})}&=&\mathbf{w}_1^\mathrm{T}\mathbf{x}+b_1\\
+	\ln\frac{p(y=2|\mathbf{x})}{p(y=K|\mathbf{x})}&=&\mathbf{w}_2^\mathrm{T}\mathbf{x}+b_2\\
+	&\dots&\\
+	\ln\frac{p(y={K-1}|\mathbf{x})}{p(y=K|\mathbf{x})}&=&\mathbf{w}_{K-1}^\mathrm{T}\mathbf{x}+b_{K-1}
+\end{eqnarray*}
+
+提示2：定义指示函数$\mathbb{I}(\cdot)$，
+$$\mathbb{I}(y=j)=
+\begin{cases}
+1& \text{若$y$等于$j$}\\
+0& \text{若$y$不等于$j$}
+\end{cases}$$
+
+\begin{solution}
+	此处用于写解答(中英文均可)
+\end{solution}
+\newpage
+
+
+\section{[20pts] Linear Discriminant Analysis}
+假设有两类数据，正例独立同分布地从高斯分布$\mathcal{N}(\mu_1,\Sigma_1)$采样得到，负例独立同分布地从另一高斯分布$\mathcal{N}(\mu_2,\Sigma_2)$采样得到，其中参数$\mu_1,\Sigma_1$及$\mu_2,\Sigma_2$均已知。现在，我们定义“最优分类”：若对空间中的任意样本点，分别计算已知该样本采样于正例时该样本出现的概率与已知该样本采样于负例时该样本出现的概率后，取概率较大的所采类别作为最终预测的类别输出，则我们说这样的分类方式满足“最优分类”性质。
+
+试证明：当两类数据的分布参数$\Sigma_1=\Sigma_2=\Sigma$时，线性判别分析 (LDA)方法满足“最优分类”性质。（提示：找到满足最优分类性质的分类平面。）
+\begin{solution}
+	此处用于写解答(中英文均可)
+\end{solution}
+\newpage
+
+
+
+\section{[55+10*pts] Logistic Regression Programming}
+在本题中，我们将初步接触机器学习编程，首先我们需要初步了解机器学习编程的主要步骤，然后结合对数几率回归，在UCI数据集上进行实战。机器学习编程的主要步骤可参见\href{http://blog.csdn.net/cqy_chen/article/details/78690975}{博客}。
+
+本次实验选取UCI数据集Page Blocks（\href{http://lamda.nju.edu.cn/ml2018/PS2/PS2_dataset.zip}{下载链接}）。数据集基本信息如表~\ref{data_inf}所示，此数据集特征维度为10维，共有5类样本，并且类别间样本数量不平衡。
+
+\begin{table}[!h]
+	\centering
+	\caption{Page Blocks数据集中每个类别的样本数量。}\vspace{3mm}
+	\label{data_inf}
+	\begin{tabular}{l|cccccc}\hline
+		标记     & 1    & 2   & 3  & 4  & 5   & total \\ \hline
+		训练集   & 4431 & 292 & 25 & 84 & 103 & 4935  \\
+		测试集   & 482  & 37  & 3  & 4  & 12  & 538   \\ \hline
+	\end{tabular}
+\end{table}
+
+对数几率回归（Logistic Regression, LR）是一种常用的分类算法。面对多分类问题，结合处理多分类问题技术，利用常规的LR算法便能解决这类问题。
+
+\begin{enumerate}[(1)]
+    \item \textbf{[5pts]} 此次编程作业要求使用Python 3或者MATLAB编写，请将main函数所在文件命名为~LR\_main.py或者LR\_main.m，效果为运行此文件便能完成整个训练过程，并输出测试结果，方便作业批改时直接调用；	
+	\item \textbf{[30pts]} 本题要求编程实现如下实验功能：
+	\begin{itemize}
+		\item \textbf{[10pts]} 根据《机器学习》3.3节，实现LR算法，优化算法可选择梯度下降，亦可选择牛顿法；
+		\item \textbf{[10pts]} 根据《机器学习》3.5节，利用“一对其余”（One vs. Rest, OvR）策略对分类LR算法进行改进，处理此多分类任务；
+		\item \textbf{[10pts]} 根据《机器学习》3.6节，在训练之前，请使用“过采样”（oversampling）策略进行样本类别平衡；
+	\end{itemize}
+	
+	
+
+	\item \textbf{[20pts]} 实验报告中报告算法的实现过程（能够清晰地体现 (1) 中实验要求，请勿张贴源码），如优化算法选择、相关超参数设置等，并填写表~\ref{exp_performance}，在\url{http://www.tablesgenerator.com/}上能够方便地制作LaTex表格；
+	
+	\item \textbf{[附加题 10pts]} 尝试其他类别不平衡问题处理策略（尝试方法可以来自《机器学习》也可来自其他参考材料），尽可能提高对少数样本的分类准确率，并在实验报告中给出实验设置、比较结果及参考文献；
+\end{enumerate}
+\noindent \textbf{[**注意**]} 本次实验除了numpy等数值处理工具包外禁止调用任何开源机器学习工具包，一经发现此实验题分数为0，请将实验所需所有源码文件与作业pdf文件放在同一个目录下，请勿将数据集放在提交目录中。
+\newpage
+\noindent{\textbf{实验报告.}}
+\begin{table}[!h]
+	\centering
+	\caption{算法在测试数据集上泛化性能测试结果，先报告在每个类别上的查全率和查准率，最后报告在整个测试数据集上的准确率。}\vspace{3mm}
+	\label{exp_performance}
+	\begin{tabular}{@{}c|cccccc@{}}
+		\toprule
+		标记     & 1    & 2    & 3    & 4    & 5    & \begin{tabular}[c]{@{}c@{}}准确率\end{tabular} \\ \midrule
+		查全率    & 0.xx & 0.xx & 0.xx & 0.xx & 0.xx & \multirow{2}{*}{0.xx}                                     \\
+		查准率 & 0.xx & 0.xx & 0.xx & 0.xx & 0.xx &  \\ \cmidrule(r){1-7}
+	\end{tabular}
+\end{table}
+
+\end{document}
