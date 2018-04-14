@@ -79,7 +79,7 @@
 \begin{document}
 \title{机器学习导论\\
 作业二}
-\author{学号, 作者姓名, 邮箱}
+\author{151220129, 吴政亿, 18805156360@163.com}
 \maketitle
 
 \section{[25pts] Multi-Class Logistic Regression}
@@ -107,6 +107,35 @@ $$\mathbb{I}(y=j)=
 
 \begin{solution}
 	此处用于写解答(中英文均可)
+\begin{enumerate}[(1)]
+	\item 由提示1得\\
+	\begin{eqnarray*}
+	\frac{p(y=i|\mathbf{x})}{p(y=K|\mathbf{x})}&=&e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}\\
+	\frac{\sum^{K-1}_{i=1}p(y=i|\mathbf{x})}{p(y=K|\mathbf{x})}
+	=\frac{1-p(y=K|\mathbf{x})}{p(y=K|\mathbf{x})}
+	&=&\sum^{K-1}_{i=1}e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}
+	\end{eqnarray*}
+	得到
+	\begin{eqnarray*}
+		p(y=K|\mathbf{x})&=&\frac{1}{1+\sum^{K-1}_{i=1}e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}}\\
+		p(y=n|\mathbf{x})&=&\frac{e^{\mathbf{w}_n^\mathrm{T}\mathbf{x}+b_n}}{1+\sum^{K-1}_{i=1}e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}}
+	\end{eqnarray*}
+	定义提示2的指示变量$\mathbb{I}$得到
+	$$p(y=n|\mathbf{x})=
+	\sum^{K-1}_{i=1}{\mathbb{I}(y=n)\frac{e^{\mathbf{w}_n^\mathrm{T}\mathbf{x}+b_n}}{1+\sum^{K-1}_{i=1}e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}}}+
+	\mathbb{I}(y=K)\frac{1}{1+\sum^{K-1}_{i=1}e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}}$$
+	同书上p59的简写,对数似然为
+	\begin{eqnarray*}
+		\ell(\beta)&=&\sum^{K}_{n=1}{\ln{p(y=n|\mathbf{x})}}\\
+		&=&\sum^{K-1}_{n=1}{\ln{\frac{e^{\mathbf{w}_n^\mathrm{T}\mathbf{x}+b_n}}{1+\sum^{K-1}_{i=1}e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}}}}+\ln{\frac{1}{1+\sum^{K-1}_{i=1}e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}}}\\
+		&=&\sum^{K-1}_{i=1}{()\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i)} 
+		+\sum^{K}_{i=1}{\ln(1+\sum^{K-1}_{i=1}e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i})}
+	\end{eqnarray*}
+
+	\item 该对数似然的梯度为:
+	$$\frac{\partial\ell(\beta)}{\partial x}=\sum^{K-1}_{i=1}{\mathbf{w}_i}+
+		\sum^{K}_{i=1}{\frac{\mathbf{w}_ie^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}}{1+\sum^{K-1}_{i=1}e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}}}$$
+	\end{enumerate}
 \end{solution}
 \newpage
 
