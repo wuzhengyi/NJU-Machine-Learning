@@ -14,6 +14,7 @@
 \usepackage{mdframed}
 \usepackage{lipsum}
 \usepackage{graphicx}
+\usepackage{listings}
 \newmdtheoremenv{thm-box}{Theorem}
 \newmdtheoremenv{prop-box}{Proposition}
 \newmdtheoremenv{def-box}{定义}
@@ -126,14 +127,14 @@ $$\mathbb{I}(y=j)=
 %	\mathbb{I}(y=K)\frac{1}{1+\sum^{K-1}_{i=1}e^{\mathbf{w}_i^\mathrm{T}\mathbf{x}+b_i}}$$
 	同书上p59的简写,对数似然为
 	\begin{eqnarray*}
-		\ln\ell(\beta)&=&\sum^{m}_{n=1}{\ln{p(y=n|\mathbf{x})}}\\
+		\ell(\beta)&=&\sum^{m}_{n=1}{\ln{p(y=n|\mathbf{x})}}\\
 		&=&\sum^{m}_{n=1}{\ln{\prod^{K}_{i=1}{p_i(\mathbf{x}_n)^{\mathbb{I}(y_n=i)}}}}\\
 		&=&\sum^{m}_{n=1}{\sum^{K}_{i=1}{\mathbb{I}(y_n=i)\ln{{p_i(\mathbf{x}_n)}}}}\\
 		&=&\sum^{m}_{n=1}{[\sum^{K-1}_{i=1}\mathbb{I}(y_n=i)\beta^\mathrm{T}_i\hat{\mathbf{x}_n}-\ln(1+\sum^{K-1}_{j=1}e^{\beta_j^\mathrm{T}\hat{\mathbf{x_n}}})]}
 	\end{eqnarray*}
 
-	\item 该对数似然的梯度为:
-	$$\frac{\partial\ln\ell(\beta)}{\partial\beta_t}=
+	\item 对每一个$\beta$求偏导，得到该对数似然的梯度为:
+	$$\frac{\partial\ell(\beta)}{\partial\beta_t}=
 	\sum^{m}_{n=1}\hat{\mathbf{x_n}}[\mathbb{I}(y_n=t)-\frac{e^{\beta_t^\mathrm{T}\hat{\mathbf{x_n}}}}{1+\sum_{i=1}^{K-1}{e^{\beta_i^\mathrm{T}\hat{\mathbf{x_n}}}}}]$$
 	\end{enumerate}
 \end{solution}
@@ -146,6 +147,28 @@ $$\mathbb{I}(y=j)=
 试证明：当两类数据的分布参数$\Sigma_1=\Sigma_2=\Sigma$时，线性判别分析 (LDA)方法满足“最优分类”性质。（提示：找到满足最优分类性质的分类平面。）
 \begin{solution}
 	此处用于写解答(中英文均可)
+	
+	应用《机器学习》书中第七章的贝叶斯分类器，得到贝叶斯分类器为
+	$$h^*(x)=\arg \max_{c\in{\cal Y}}P(c|x)$$
+	在LDA中，已知$\Sigma_1=\Sigma_2=\Sigma$下，已知多变量的高斯分布密度函数为:
+	$$f_c(x)=\frac{1}{(2\pi)^{d/2}|\Sigma_c|^{1/2}}e^{-\frac{1}{2}(x-\mu_c)^T\Sigma_{c}^{-1}(x-\mu_c)}$$
+	
+	得到
+	\begin{align*}  h^*(x)
+	& = \arg \max_{c\in{\cal Y}} P(h=c|X=x) \\
+	& = \arg \max_{c\in{\cal Y}} f_c(x)P(c) \\
+	& = \arg \max_{c\in{\cal Y}} \log(f_c(x)P(c)) \\
+	& = \arg \max_{c\in{\cal Y}} \left[-\frac{1}{2}(x-\mu_c)^T\Sigma^{-1}(x-\mu_c)+\log(P(c))  \right]
+	\end{align*}
+	因此
+	$${h}^*(x)= \arg \max_{c\in{\cal Y}}\left[x^T\Sigma^{-1}\mu_c-\frac{1}{2}\mu_{c}^{T}\Sigma^{-1}\mu_{c}+\log(P(c))\right]
+	$$
+	当数据1与数据2代入${h}^*(x)$相同时，即为满足最优分类性质的分类平面，即
+	$$\log\frac{P(m_1)}{P(m_2)}-\frac{1}{2}(\mu_{m_1}+\mu_{m_2})^T\Sigma^{-1}(\mu_{m_1}-\mu_{m_2})+x^T\Sigma^{-1}(\mu_{m_1}-\mu_{m_2})=0$$
+	由于此函数为线性函数，故为满足最优分类性质的分类平面，平面法向量为
+	$$\omega^*=\Sigma^{-1}(\mu_{m_1}-\mu_{m_2})$$
+	
+	\footnote{\textbf{参考:https://blog.csdn.net/VictoriaW/article/details/78275394?locationNum=8\&fps=1}}
 \end{solution}
 \newpage
 
@@ -187,16 +210,115 @@ $$\mathbb{I}(y=j)=
 \noindent \textbf{[**注意**]} 本次实验除了numpy等数值处理工具包外禁止调用任何开源机器学习工具包，一经发现此实验题分数为0，请将实验所需所有源码文件与作业pdf文件放在同一个目录下，请勿将数据集放在提交目录中。
 \newpage
 \noindent{\textbf{实验报告.}}
-\begin{table}[!h]
-	\centering
-	\caption{算法在测试数据集上泛化性能测试结果，先报告在每个类别上的查全率和查准率，最后报告在整个测试数据集上的准确率。}\vspace{3mm}
-	\label{exp_performance}
-	\begin{tabular}{@{}c|cccccc@{}}
-		\toprule
-		标记     & 1    & 2    & 3    & 4    & 5    & \begin{tabular}[c]{@{}c@{}}准确率\end{tabular} \\ \midrule
-		查全率    & 0.xx & 0.xx & 0.xx & 0.xx & 0.xx & \multirow{2}{*}{0.xx}                                     \\
-		查准率 & 0.xx & 0.xx & 0.xx & 0.xx & 0.xx &  \\ \cmidrule(r){1-7}
-	\end{tabular}
-\end{table}
+\begin{enumerate}[(1)]
+	\item 我已遵循实验要求，应用python3编程，文件名为\textbf{\color{blue}LR\_main.py}，可直接运行并输出各标记查准率与查全率，以及准确率。
+	\item 
+	\begin{enumerate}
+		\item 实现LR算法，并且分别应用了\textbf{\color{blue}gradAscent}与\textbf{\color{blue}newTon}，可以在main函数中更改bool变量\textbf{\color{blue}isNewton = True}进行切换
+		\item 分别将样本1~5作为正类，其他作为反类，应用LR算法，本代码对应函数\\
+		\textbf{\color{blue}def classify(num, isOverSampling, isNewton)}\\
+		其中num为对应的作为正类的label，isOverSampling选择是否过采样，isNewton选择优化算法
+		\item 过采样应用了抽样采样，设置一个随机数令结果更具有随机性，在loadTrainData时调用并进行归一化(线性归一化)，对应函数\textbf{\color{blue}def overSampling(feature, label)}
+	\end{enumerate}
+	\item 
+		牛顿迭代:每次按照教材公式求一阶导数与二阶导数，然后对比迭代前后的向量欧氏距离，当欧氏距离小于1e-1时停止迭代，实验中遇到了numpy.exp溢出问题，最后将公式变形为$\frac{1}{1+e^wx+b}$后得到改善，但扔有溢出现象发生，主要在标记二中
+		梯度下降：每次步长固定为0.01，对于迭代次数，大量具有重复性的精准良好结果均证明500达到局部最优值
+	\begin{table}[!h]
+		\centering
+		\caption{无过采样 梯度下降 步长0.01 迭代500}
+		\label{}
+		\begin{tabular}{l|llllll}
+			\hline
+			标记  & 1    & 2    & 3    & 4    & 5    & 准确率                   \\ \hline
+			查全率 & 0.98 & 0.81 & 0.67 & 0.75 & 0.25 & \multirow{2}{*}{0.95} \\ \cline{1-1}
+			查准率 & 0.97 & 0.77 & 1.00 & 1.00 & 0.50 &                       \\ \hline
+		\end{tabular}
+	\end{table}
 
+	\begin{table}[!h]
+		\centering
+		\caption{过采样(随机) 梯度下降 步长0.01 迭代500}
+		\label{}
+		\begin{tabular}{l|llllll}
+			\hline
+			标记  & 1    & 2    & 3    & 4    & 5    & 准确率                   \\ \hline
+			查全率 & 0.93 & 0.78 & 1.00 & 1.00 & 0.33 & \multirow{2}{*}{0.95} \\ \cline{1-1}
+			查准率 & 0.97 & 0.97 & 0.17 & 0.40 & 0.21 &                       \\ \hline
+		\end{tabular}
+	\end{table}
+
+	\begin{table}[!h]
+		\centering
+		\caption{过采样(随机) 牛顿迭代}
+		\label{}
+		\begin{tabular}{l|llllll}
+			\hline
+			标记  & 1    & 2    & 3    & 4    & 5    & 准确率                   \\ \hline
+			查全率 & 0.91 & 0.95 & 0.00 & 0.00 & 0.75 & \multirow{2}{*}{0.90} \\ \cline{1-1}
+			查准率 & 0.99 & 0.73 & 0.00 & 0.00 & 0.20 &                       \\ \hline
+		\end{tabular}
+	\end{table}
+
+	
+	由表中数据可以得到，过采样对标记2345等样本较少的标记是友好的，但是对标记1不太友好，另外实验数据中无过采样表现出更高的准确率，对于过采样其中的误差可能因为忽略了某些重要的点，或者某些不具有实际意义的点在过采样中被随机出现的次数过高，因此过采样的数据具有较大波动性，上面表格为程序运行后选择的最具有代表性的值。
+	
+	下面表格\ref{my-label}简要描述核心算法
+	
+	\begin{table}[!h]
+		\centering
+		\caption{核心算法介绍}
+		\label{my-label}
+		\begin{tabular}{|l|l|}
+			\hline
+			函数               & 含义                                                                  \\ \hline
+			firstDerivative  & 对给定的书中的β求一阶导数                                                       \\ \hline
+			secondDerivative & 对给定的书中的β求二阶导数                                                       \\ \hline
+			newton           & 牛顿迭代，每一次的差值为- secondDerivative\textasciicircum -1 * firstDerivative \\ \hline
+			gradAscent       & 梯度下降，每一次的差值为步长*feature\textasciicircum -1*(label - firstDerivative) \\ \hline
+			overSampling     & 过采样，得到最大的标记数，然后将较少的标记类通过随机取样的方式扩充                                   \\ \hline
+			classify         & 将训练集的num作为正类，其他作为反类，计算并返回权值                                         \\ \hline
+		\end{tabular}
+	\end{table}
+
+	\item 应用\textbf{再放缩}得到如下数据，其中梯度下降的步长为0.01，迭代次数为500;牛顿法在欧氏距离小于0.1时停止
+		\begin{table}[!h]
+		\centering
+		\caption{再缩放 梯度下降 步长0.01 迭代500}
+		\label{}
+		\begin{tabular}{l|llllll}
+			\hline
+			标记  & 1    & 2    & 3    & 4    & 5    & 准确率                   \\ \hline
+			查全率 & 0.95 & 0.89 & 1.00 & 1.00 & 0.67 & \multirow{2}{*}{0.95} \\ \cline{1-1}
+			查准率 & 0.99 & 0.67 & 0.67 & 0.50 & 0.17 &                       \\ \hline
+		\end{tabular}
+	\end{table}
+	
+	\begin{table}[!h]
+		\centering
+		\caption{再缩放 牛顿迭代}
+		\label{}
+		\begin{tabular}{l|llllll}
+			\hline
+			标记  & 1    & 2    & 3    & 4    & 5    & 准确率                   \\ \hline
+			查全率 & 0.98 & 0.89 & 1.00 & 0.33 & 0.75 & \multirow{2}{*}{0.95} \\ \cline{1-1}
+			查准率 & 0.98 & 0.83 & 0.67 & 1.00 & 0.25 &                       \\ \hline
+		\end{tabular}
+	\end{table}
+
+	\begin{table}[!h]
+	\centering
+	\caption{过采样(smote) 牛顿迭代}
+	\label{}
+	\begin{tabular}{l|llllll}
+		\hline
+		标记  & 1    & 2    & 3    & 4    & 5    & 准确率                   \\ \hline
+		查全率 & 0.09 & 0.51 & 0.00 & 0.00 & 0.08 & \multirow{2}{*}{0.12} \\ \cline{1-1}
+		查准率 & 0.95 & 0.10 & 0.00 & 0.00 & 0.01 &                       \\ \hline
+	\end{tabular}
+	\end{table}
+	可以发现，对于梯度下降，再缩放对于查全率有着明显上升，但是查准率有所下降，由此分析该模型可能存在一定程度的欠拟合；同理，对于牛顿迭代，再缩放对于查全率有所下降，但是在查准率明显上升，由此分析该模型可能存在一定程度的过拟合。\\
+	另外，对于smote算法，将代码95-125注释，将code 67-92取消注释即可进行smote，从理论上来讲，我们可以得到smote算法对于少数的标记具有更好的拟合，然而事实上实验结果恰恰相反，这其中的误差可能是因为我们生成了许多无效点。在这里我提出一种判断生成的smote点是否时有效点的方法：\\
+	我们可以通过计算生成的smote点在一定范围内，正例的点个数与反例的点个数的数量(正例指的是smote生成的点类型)，如果反例的点与正例的点的比值大于一个定值，那我们认为这个点无效，重新生成。
+\end{enumerate}
+\footnote{\textbf{参考:https://www.cnblogs.com/muchen/p/6296957.html}}
 \end{document}
