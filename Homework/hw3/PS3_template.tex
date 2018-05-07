@@ -15,6 +15,7 @@
 \usepackage{mdframed}
 \usepackage{lipsum}
 \usepackage{graphicx}
+
 \newmdtheoremenv{thm-box}{Theorem}
 \newmdtheoremenv{prop-box}{Proposition}
 \newmdtheoremenv{def-box}{定义}
@@ -322,9 +323,27 @@
 		\item \textbf{池化层（Pooling layer）}，通常在卷积层之后会得到维度很大的特征，将特征切成几个区域，取其最大值或平均值，得到新的、维度较小的特征。
 		\item \textbf{全连接层（ Fully-Connected layer）}, 把所有局部特征结合变成全局特征，用来计算最后每一类的得分。
 	\end{enumerate}
+	\subsection{卷积层}
+	卷积层有两个重要的概念:
+	\begin{enumerate}
+		\item local receptive fields (感受视野)
+		\item shared weights (共享权值)
+	\end{enumerate}
+	在神经网络中，隐藏层与输入层是全连接，对于本数据集来说就是$32*32*3=3072$的三维神经元，如果隐藏神经元有15个，那么参数个数就有$3072*15=46080$个，这个参数过于巨大了。而local receptive fields的意义就在于大幅度减少参数的个数，并且依旧拥有出色的性能。假设我们定义一个$5*5*3$的一个local receptive fields(三维的，因为RGB图像)，即隐藏层的神经元与输入层的$5*5*3$个神经元相连，这可以类似看作隐藏层中的神经元 具有一个固定大小的感受视野去感受上一层的部分特征。在全连接神经网络中，隐藏层中的神经元的感受视野足够大乃至可以看到上一层的所有特征。\\
+	而在卷积神经网络中，隐藏层中的神经元的感受视野比较小，只能看到上一次的部分特征，上一层的其他特征可以通过平移感受视野来得到同一层的其他神经元，由同一层其他神经元来看。假设每一次平移的stride(步长)为1，那么参数的个数就会锐减为$28*28=784$个。
+	
+	\subsection{池化层}
+	如果在卷积层选的local receptive fields和stride都比较小，得到的参数feature map依旧比较大，而池化层的意义就在于他可以对每一个feature map进行降维操作，同时深度依旧是feature map的个数保持不变。\\
+	池化层也有一个类似于卷积层的"池化视野(filter)"来对feature map进行扫描降维度,一般有两种计算方式:
+	\begin{enumerate}
+		\item Max pooling: 取“池化视野”矩阵中的最大值
+		\item Average pooling: 取“池化视野”矩阵中的平均值
+	\end{enumerate}
+	如果我们假定filter为2*2，stride为2的话，我们的feature map大小就会从784锐减到到$14*14=196$个。
 	
 	
 	
 \end{enumerate}
 \footnote{\textbf{参考:https://www.cnblogs.com/muchen/p/6296957.html}}
+\footnote{\textbf{参考:https://blog.csdn.net/cxmscb/article/details/71023576}}
 \end{document}
