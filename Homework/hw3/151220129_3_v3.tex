@@ -82,7 +82,7 @@
 \begin{document}
 \title{机器学习导论\\
 作业三}
-\author{151220129, 吴政亿, nju\_wzy@smail.nju.edu.cn}
+\author{151220129, 吴政亿, wuzy.nju@gmail.com}
 \maketitle
 
 
@@ -277,9 +277,71 @@
  \begin{solution}
 	此处用于写解答(中英文均可)
 	\begin{enumerate}[ {(}1{)}]
-		\item 
+		\item 见图\ref{p30}
+		 	\begin{figure}[!h]
+				\centering   
+				\includegraphics[width=1\textwidth, height=0.85\textwidth]{p30.png}  
+				\caption{神经网络$\mathcal{N}$的示意图} 
+				\label{p30}
+			\end{figure}
+		\pagebreak
+		
+		\item 首先给出阶跃函数的定义，其中当$x=0$时取值为$1$:
+		 $$sgn(x) = \begin{cases}
+		 1& \text{,$x \geq 0$}\\
+		 0& \text{,$x < 0$}
+		 \end{cases}$$
+		 计算值:$$y = wx-b$$
+		 对于函数$\mathcal{N}$的其中一个维度，我们将其划分为m份，则其被划分为$[-1,\frac{2}{m}],......,[1-\frac{2}{m},1]$,那么我们就可以将定义域划分为$m^n$个子空间。\\
+		 我们首先构造一个神经元模型用于确定输入$x_i$在m的哪一个子空间中，见图\ref{p31}。\\
+		 
+		 \begin{figure}[!h]
+		 	\centering   
+		 	\includegraphics[width=0.8\textwidth, height=0.3\textwidth]{p31.png}  
+		 	\caption{判断$x_k$是否在子空间$[l,r]$中} 
+		 	\label{p31}
+		 \end{figure}
+	 %	\pagebreak
+	 	这个神经元网络模型可以判断$x_k$是否在子空间$[l,r]$中，因此我们对于输入$x$可以构造n个此结构得到输出$c_1,...,c_n$，这是一个输出只有1和0的序列，并且只有一个$c_i=1$，其余均为0。\\
+	 	接下来，我们应用这个子模型构造一个模型来得到样本x在哪一个子空间中($m^n$个)，见图\ref{p32}，定义子域为$(c_1,c_2,...,c_m)$,\\
+	 	$c_i \in \{1,2,...,n\}$，$W_{ij}(i=\{1,...,n\},j=\{1,...,m\})$代表x的第i的参数$c_i$位于第j个子域中。它的Sgn(·)函数为:
+	 	$$Sgn(\cdot) = \sum_{i=1}^n{w_ix_i}-n=\sum_{i=1}^n{W_{ic_i}}-n$$
+	 	
+	 	\begin{figure}[!h]
+	 		\centering   
+	 		\includegraphics[width=0.5\textwidth, height=0.5\textwidth]{p32.png}  
+	 		\caption{判断样本x是否在子域空间$(u_1,...,u_n)$中} 
+	 		\label{p32}
+	 	\end{figure}
+	 	
+	 	
+	 %	\pagebreak
+	 	那么对于$m^n$个隐层神经元也是一个只有一个取值为1，其他都是0的输入，我们令每一个子域它对应的取值时它中心在函数$f$上的取值，定义$u = \frac{l+r}{2}$。我们只需要给每一个输出设置权重为$f(u_1,u_2,...,u_n)$，便可以得到神经网络$\mathcal{N}$的输出，见图\ref{p33}。
+	 	
+	 	\begin{figure}[!h]
+	 		\centering   
+	 		\includegraphics[width=0.5\textwidth, height=0.5\textwidth]{p33.png}  
+	 		\caption{根据子域计算最终输出$\mathcal{N}$} 
+	 		\label{p33}
+	 	\end{figure}
+ 		
+ 	%	\pagebreak
+ 		\item 对于任意的输入样本$ \mathbf{x} \in [-1,1]^n, \exists \rho > 0$，对于$x_i$，
+ 		由于求值的点在子域的中心，因此有\\
+ 		$|u_i-x_i|\leq \frac{1}{m}$，故
+ 		$$
+ 		|f(\mathbf{x}) - \mathcal{N}(\mathbf{x})| 
+ 		\leq \rho\sqrt{\sum_{i=1}^{n}{(u_i-x_i)^2}}\\
+ 		\leq \rho\sqrt{n(\frac{1}{m}^2)}\\
+ 		\leq \epsilon
+ 		$$
+ 		得到当m满足下式时，符合条件。
+ 		$$m \geq \frac{\rho\sqrt{n}}{\epsilon}$$
+ 		另外，可以得到结论，随着m的增加，神经网络$\mathcal{N}$的拟合度将越来越高，由此可见，无论什么函数，只要他是连续的，应用神经网络都可以拟合得到令人满意的结果。
 	\end{enumerate}
+\footnote{\textbf{在本题的solution中，我要特别致谢陆依鸣同学，他给我提供了宝贵无比的思路，也要致谢吴昕，她在本题的神经网络结构中给予了巨大的帮助。}}
  \end{solution}
+\pagebreak
 \newpage
 
 \section{[40pts] Neural Network in Practice}
@@ -303,7 +365,7 @@
 	\item \textbf{[20pts]} 显然，这样一个简单的网络在CIFAR10上并不能取得令人满意的结果，我们需要选取一个更为复杂的网络来提升训练效果。在此小题中，我们选取了CIFAR10准确率排行榜上排名第二的结构，具体参见\href{https://arxiv.org/pdf/1412.6806.pdf}{论文链接}。为了方便大家实现，我们直接给出了网络结构如图\ref{network_structure}所示。请大家搭建完成此网络结构，并选择Adam为优化器，自行调整相关参数完成训练和预测，实验结果报告内容同第（1）小题；
 	\begin{figure}[!h]
 		\centering   
-		\includegraphics[width=0.99\textwidth, height=0.15\textwidth]{nn_structure.png}  
+		\includegraphics[width=0.99\textwidth,height=0.15\textwidth]{nn_structure.png}  
 		\caption{待实现网络结构} 
 		\label{network_structure}
 	\end{figure}
