@@ -14,27 +14,52 @@ from torch.autograd import Variable
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(3, 6, 5)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 5 * 5, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 10)
+        self.conv1 = nn.Conv2d(3, 96, 3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(96, 96, 3, stride=1, padding=1)
+        self.conv3 = nn.Conv2d(96, 96, 3, stride=2, padding=1)
+        self.conv4 = nn.Conv2d(96, 192, 3, stride=1, padding=1)
+        self.conv5 = nn.Conv2d(192, 192, 3, stride=1, padding=1)
+        self.conv6 = nn.Conv2d(192, 192, 3, stride=2, padding=1)
+        self.conv7 = nn.Conv2d(192, 192, 3, stride=1, padding=0)
+        self.conv8 = nn.Conv2d(192, 192, 1, stride=1, padding=0)
+        self.conv9 = nn.Conv2d(192, 10, 1, stride=1, padding=0)
+        self.pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.drop1 = nn.Dropout2d(p=0.2)
+        self.drop2 = nn.Dropout2d(p=0.5)
+        self.drop3 = nn.Dropout2d(p=0.5)
+        self.relu = nn.ReLU()
 
     def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 16 * 5 * 5)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
+        x = self.drop1(x)
+        x = self.conv1(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+        x = self.relu(x)
+        x = self.conv3(x)
+        x = self.relu(x)
+        x = self.drop2(x)
+        x = self.conv4(x)
+        x = self.relu(x)
+        x = self.conv5(x)
+        x = self.relu(x)
+        x = self.conv6(x)
+        x = self.relu(x)
+        x = self.drop3(x)
+        x = self.conv7(x)
+        x = self.relu(x)
+        x = self.conv8(x)
+        x = self.relu(x)
+        x = self.conv9(x)
+        x = self.relu(x)
+        x = self.pool(x)
+        x = torch.squeeze(x)
         return x
 
 
-def imshow(img):
-    img = img / 2 + 0.5  # unnormalize
-    npimg = img.numpy()
-    plt.imshow(np.transpose(npimg, (1, 2, 0)))
+# def imshow(img):
+#     img = img / 2 + 0.5  # unnormalize
+#     npimg = img.numpy()
+#     plt.imshow(np.transpose(npimg, (1, 2, 0)))
 
 
 if __name__ == '__main__':
@@ -44,10 +69,10 @@ if __name__ == '__main__':
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=4, shuffle=True, num_workers=2)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=256, shuffle=True, num_workers=2)
 
     testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=4, shuffle=False, num_workers=2)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=256, shuffle=False, num_workers=2)
 
     classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
@@ -64,8 +89,8 @@ if __name__ == '__main__':
     net.to(device)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9, weight_decay=0.001)
-
+    # optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9, weight_decay=0.001)
+    optimizer = optim.Adam(net.parameters(), lr = 0.001, weight_decay=0.0001)
     for epoch in range(50):  # loop over the dataset multiple times
 
         running_loss = 0.0
@@ -86,9 +111,9 @@ if __name__ == '__main__':
 
             # print statistics
             running_loss += loss.item()
-            if i % 2000 == 1999:  # print every 2000 mini-batches
+            if i % 20 == 19:  # print every 2000 mini-batches
                 print('[%d, %5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss / 2000))
+                      (epoch + 1, i + 1, running_loss / 20))
                 running_loss = 0.0
         if epoch == 5 or epoch == 10 or epoch == 15 or epoch == 20 or epoch == 25 or epoch == 30 or epoch == 35 or epoch == 40 or epoch == 45 or epoch == 50:
             correct = 0

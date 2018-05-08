@@ -332,18 +332,141 @@
 	在神经网络中，隐藏层与输入层是全连接，对于本数据集来说就是$32*32*3=3072$的三维神经元，如果隐藏神经元有15个，那么参数个数就有$3072*15=46080$个，这个参数过于巨大了。而local receptive fields的意义就在于大幅度减少参数的个数，并且依旧拥有出色的性能。假设我们定义一个$5*5*3$的一个local receptive fields(三维的，因为RGB图像)，即隐藏层的神经元与输入层的$5*5*3$个神经元相连，这可以类似看作隐藏层中的神经元 具有一个固定大小的感受视野去感受上一层的部分特征。在全连接神经网络中，隐藏层中的神经元的感受视野足够大乃至可以看到上一层的所有特征。\\
 	而在卷积神经网络中，隐藏层中的神经元的感受视野比较小，只能看到上一次的部分特征，上一层的其他特征可以通过平移感受视野来得到同一层的其他神经元，由同一层其他神经元来看。假设每一次平移的stride(步长)为1，那么参数的个数就会锐减为$28*28=784$个。
 	
-	\subsection{池化层}
+	\subsection{池化层，"汇合"层}
 	如果在卷积层选的local receptive fields和stride都比较小，得到的参数feature map依旧比较大，而池化层的意义就在于他可以对每一个feature map进行降维操作，同时深度依旧是feature map的个数保持不变。\\
 	池化层也有一个类似于卷积层的"池化视野(filter)"来对feature map进行扫描降维度,一般有两种计算方式:
 	\begin{enumerate}
 		\item Max pooling: 取“池化视野”矩阵中的最大值
 		\item Average pooling: 取“池化视野”矩阵中的平均值
 	\end{enumerate}
-	如果我们假定filter为2*2，stride为2的话，我们的feature map大小就会从784锐减到到$14*14=196$个。
+	如果我们假定filter为2*2，stride为2的话，我们的feature map大小就会从784锐减到到$14*14=196$个。可见其作用是基于局部相关性原理进行亚采样，从而在减少数据量的同时保留有用信息。
 	
+	\subsection{实验参数}
+	实验一中,我设置的参数是lr=0.001, momentum=0.9, weight\_decay=0.001，下列数据是一个具有代表性意义的典型特征结果。一系列可靠结果表明，该模型在准确率达到65\%左右便达到了最佳拟合状态，在后面的epoch中loss已经不再下降甚至令模型过拟合。下表~\ref{figure1}, ~\ref{p1.2}给出了epoch=15与epoch=50的对比，可以发现epoch=50得到的实验结果并没有前者优秀。\\
 	
+	大量具有重复性的精确良好实验均证明，epoch=15时模型达到最优，如图~\ref{p1.3}所示，不难得到如果我们将learn rate进一步调小，该模型的准确率还会有一定上升。
+	\begin{table}[!h]
+		\centering
+		\caption{lr=0.001, momentum=0.9, weight\_decay=0.001, epoch=15}
+		\label{figure1}
+		\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+			\hline
+			Class          & plane & car  & bird & cat  & deer & dog  & frog & horse & ship & truck \\ \hline
+			Accuracy       & 80\%  & 65\% & 53\% & 37\% & 60\% & 60\% & 79\% & 70\%  & 71\% & 71\%  \\ \hline
+			Total accuracy & \multicolumn{10}{c|}{65\%}                                             \\ \hline
+			Total loss 	   & \multicolumn{10}{c|}{2643}                                             \\ \hline
+		\end{tabular}
+	\end{table}
+
+	\begin{table}[!h]
+	\centering
+	\caption{lr=0.001, momentum=0.9, weight\_decay=0.001, epoch=50}
+	\label{p1.2}
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+		Class          & plane & car  & bird & cat  & deer & dog  & frog & horse & ship & truck \\ \hline
+		Accuracy       & 66\%  & 89\% & 53\% & 37\% & 45\% & 62\% & 80\% & 59\%  & 75\% & 69\%  \\ \hline
+		Total accuracy & \multicolumn{10}{c|}{64\%}                                             \\ \hline
+		Total loss 	   & \multicolumn{10}{c|}{2807}                                             \\ \hline
+	\end{tabular}
+	\end{table}
 	
+	\begin{figure}[!h]
+		\centering   
+		\includegraphics[width=0.5\textwidth, height=0.5\textwidth]{p1.png}  
+		\caption{第一题:lr=0.001, momentum=0.9, weight\_decay=0.001} 
+		\label{p1.3}
+	\end{figure}
+	
+	\pagebreak
+	\item 实验二中，大量的实验数据中，我选取了下列三组数据以展开进一步的分析。他们的学习率分别是0.001, 0.00025, 0.0001。观察表~\ref{p2.1}, ~\ref{p2.2}, ~\ref{p2.3}可以看出，学习率在0.00025时得到了较为出色的成绩，这个数据是从0.001到0.0001上随机分布然后实验后，得到的最为稳定下降的数值，可以观察图~\ref{p21}, ~\ref{p22}, ~\ref{p23}。至于更低的学习率与更高的epoch，由于每一次实验的时间代价过于昂贵，若想要得到得到更高的准确度，我们仍需在未来投入大量的工作并开展更为深入的研究。
+	
+	\begin{table}[!h]
+		\centering
+		\caption{lr = 0.001, weight\_decay=0.0001, epoch=50}
+		\label{p2.1}
+		\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+			\hline
+			Class          & plane & car  & bird & cat  & deer & dog  & frog & horse & ship & truck \\ \hline
+			Accuracy       & 75\%  & 92\% & 84\% & 50\% & 69\% & 46\% & 66\% & 91\%  & 90\% & 94\%  \\ \hline
+			Total accuracy & \multicolumn{10}{c|}{74\%}                                             \\ \hline
+			Total loss 	   & \multicolumn{10}{c|}{29}                                             \\ \hline
+		\end{tabular}
+	\end{table}
+	
+
+
+	\begin{table}[!h]
+	\centering
+	\caption{lr = 0.00025, weight\_decay=0.0001, epoch=50}
+	\label{p2.2}
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+		Class          & plane & car  & bird & cat  & deer & dog  & frog & horse & ship & truck \\ \hline
+		Accuracy       & 81\%  & 100\% & 76\% & 31\% & 69\% & 53\% & 77\% & 83\%  & 95\% & 94\%  \\ \hline
+		Total accuracy & \multicolumn{10}{c|}{77\%}                                             \\ \hline
+		Total loss 	   & \multicolumn{10}{c|}{27}                                             \\ \hline
+	\end{tabular}
+	\end{table}
+
+	\begin{table}[!h]
+	\centering
+	\caption{lr = 0.0001, weight\_decay=0.0001, epoch=50}
+	\label{p2.3}
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+		Class          & plane & car  & bird & cat  & deer & dog  & frog & horse & ship & truck \\ \hline
+		Accuracy       & 68\%  & 100\% & 76\% & 18\% & 53\% & 73\% & 66\% & 100\%  & 85\% & 76\%  \\ \hline
+		Total accuracy & \multicolumn{10}{c|}{74\%}                                             \\ \hline
+		Total loss 	   & \multicolumn{10}{c|}{28}                                             \\ \hline
+	\end{tabular}
+	\end{table}
+
+	\begin{figure}[!h]
+	\centering   
+	\includegraphics[width=0.5\textwidth, height=0.5\textwidth]{p21.png}  
+	\caption{第二题:lr = 0.001, weight\_decay=0.0001, epoch=50} 
+	\label{p21}
+	\end{figure}
+
+	\begin{figure}[!h]
+	\centering   
+	\includegraphics[width=0.5\textwidth, height=0.5\textwidth]{p22.png}  
+	\caption{第二题:lr = 0.00025, weight\_decay=0.0001, epoch=50} 
+	\label{p22}
+	\end{figure}
+
+	\begin{figure}[!h]
+	\centering   
+	\includegraphics[width=0.5\textwidth, height=0.5\textwidth]{p23.png}  
+	\caption{第二题:lr = 0.0001, weight\_decay=0.0001, epoch=50} 
+	\label{p23}
+	\end{figure}
+
+	\pagebreak
+	\item 
+	在本次实验中，从理论上讲，我们可以得到近似论文中的准确率，然而事实上实验结果差强人意。这其中的误差可能源自一下几个方面:
+	
+	\begin{enumerate}
+		\item 实验网络结构图中，最后一步pooling参数显示的kernel是0，但是实际上可能不是。
+		\item 在相同的参数下，实验结果仍然具有一定的随机性，因此如果在实验条件允许的情况下，对于每一种参数取值都进行大量重复实验取平均值才可以准确判断这一模型的参数如何。
+		\item 双方的学习率与epoch差别过大，论文作者也许lr取值远远小于或大于0.0001，这样的话逐步逼近也许会有着更好的结果，收敛时loss数值更低。	
+	\end{enumerate}
+
+	当然，本次实验中，我对于调参也有了一些体会，综合网上查到的一些资料，我列出了一些调参的方法：
+	
+	\begin{enumerate}
+		\item 初始化。尝试不同的初始化方法可能对精度的影响巨大，例如用normal初始化cnn参数与xavier初始化参数。
+		\item 进度条。良好的可视化可以帮助我们观察本次参数的取值如何，loss逐步下降与收敛可以告知我们机器学习的进度如何，是否要终止本次学习更新参数。
+		\item Learning Rate合理。如果lr太大会导致loss爆炸，或者nan；如果lr太小会导致loss下降缓慢。对于lr的调参，如果我们观察到loss的数值从初始值一路下降，然后收敛到一定数值后，就意味着我们可以进一步降低学习率了。
+		\item 可视化。将图片学习后可视化出来，如果发现和原始输入基本相同，那么很大程度就意味着feature map没有学到多少有价值的信息。
+		\item weight可视化。通常，我们期待良好的卷积层的weight可视化出来会具备smooth的特性。如果发现图中有很多噪点，往往意味着我们的模型训练中出现了问题。
+		\item 调参需要在验证集上，相比于训练集的loss，验证集的loss更为重要。
+		\item \textbf{[玄学经验]一名合格的炼丹师，首先大力出奇迹，然后最后发现，你在训练模型的时候，模型也在训练你。}
+	\end{enumerate}
+
 \end{enumerate}
 \footnote{\textbf{参考:https://www.cnblogs.com/muchen/p/6296957.html}}
 \footnote{\textbf{参考:https://blog.csdn.net/cxmscb/article/details/71023576}}
+\footnote{\textbf{参考:https://www.zhihu.com/question/25097993}}
 \end{document}
